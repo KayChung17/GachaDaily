@@ -289,7 +289,7 @@ function drawCard() {
   if (isGachaAnimating) return;
   const pool = state.settings.cardPool.filter((card) => card.imageUrl && card.imageUrl.trim());
   if (!pool.length) {
-    alert("先去同步RSS把老婆们装进卡池再抽啊");
+    alert("先去同步RSS把老婆们装进卡池啊");
     return;
   }
 
@@ -305,7 +305,7 @@ function drawCard() {
   }
 
   if (state.currency < state.settings.gachaCost) {
-    alert("积分不足，完成任务后再来抽卡。赶紧滚去<del>打工</del>做任务攒积分啊喂！");
+    alert("赶紧滚去<del>打工</del>做任务攒积分");
     return;
   }
 
