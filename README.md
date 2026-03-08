@@ -44,3 +44,9 @@ $env:SYNC_TOKEN="<你的同步令牌>"
 $env:SYNC_ALLOW_ORIGIN="http://localhost:3000"
 python sync_server.py
 ```
+
+## TODO
+
+- [ ] 卡池自定义稀有度
+- [ ] 统一UI设计(AI还是少点意思）
+- [ ] 取消对RSS的依赖，寻找其他爬取图片途径
