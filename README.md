@@ -40,7 +40,6 @@ python rss_proxy.py
 
 ```powershell
 $env:SYNC_PORT="8788"
-$env:SYNC_TOKEN="<你的同步令牌>"
 $env:SYNC_ALLOW_ORIGIN="http://localhost:3000"
 python sync_server.py
 ```

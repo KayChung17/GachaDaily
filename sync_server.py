@@ -6,7 +6,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 PORT = int(os.environ.get("SYNC_PORT", "8788"))
 DATA_PATH = os.environ.get("SYNC_DATA_PATH", "sync_data.json")
-TOKEN = os.environ.get("SYNC_TOKEN", "demo-token")
 ALLOW_ORIGIN = os.environ.get("SYNC_ALLOW_ORIGIN", "http://localhost:3000")
 
 
@@ -32,15 +31,10 @@ class SyncHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", content_type)
         self.send_header("Access-Control-Allow-Origin", ALLOW_ORIGIN)
         self.send_header("Access-Control-Allow-Methods", "GET, PUT, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
         if body is not None:
             self.wfile.write(body)
-
-    def _auth(self):
-        auth = self.headers.get("Authorization", "")
-        token = auth.replace("Bearer ", "").strip()
-        return token == TOKEN
 
     def do_OPTIONS(self):
         self._send(204, b"")
@@ -49,18 +43,12 @@ class SyncHandler(BaseHTTPRequestHandler):
         if self.path != "/api/sync":
             self._send(404, b'{"error":"not found"}')
             return
-        if not self._auth():
-            self._send(401, b'{"error":"unauthorized"}')
-            return
         data = load_data() or {"version": 0, "updatedAt": None, "payload": None}
         self._send(200, json.dumps(data).encode("utf-8"))
 
     def do_PUT(self):
         if self.path != "/api/sync":
             self._send(404, b'{"error":"not found"}')
-            return
-        if not self._auth():
-            self._send(401, b'{"error":"unauthorized"}')
             return
 
         length = int(self.headers.get("Content-Length", "0"))
