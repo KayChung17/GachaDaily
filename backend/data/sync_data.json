@@ -1,17 +1,16 @@
 {
-  "version": 0,
-  "updatedAt": null,
+  "version": 1,
+  "updatedAt": "2026-03-17T13:01:49.810064Z",
   "payload": {
-    "currency": 0,
+    "currency": 1,
     "tasks": [],
     "cards": [],
     "settings": {
       "gachaCost": 100,
-      "rssUrl": "<你的RSS链接>",
+      "rssUrl": "/api/rss",
       "activePage": "tasks",
       "themeMode": "gorgeous",
-      "syncUrl": "http://127.0.0.1:8788/api/sync",
-      "syncToken": "<你的同步令牌>",
+      "syncUrl": "/api/sync",
       "cardPool": []
     }
   }

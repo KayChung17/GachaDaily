@@ -16,9 +16,7 @@ export function useRemoteSync(
   const syncStatus = ref("状态：未同步");
 
   function getSyncPayload(): AppState {
-    const payload = normalizeIncoming(JSON.parse(JSON.stringify(state)));
-    payload.settings.syncToken = "";
-    return payload;
+    return normalizeIncoming(JSON.parse(JSON.stringify(state)));
   }
 
   async function syncPull(): Promise<void> {
@@ -31,12 +29,7 @@ export function useRemoteSync(
     syncStatus.value = "正在拉取...";
 
     try {
-      const token = (state.settings.syncToken || "").trim();
-      const headers: Record<string, string> = {};
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-      const res = await fetch(url, { headers, cache: "no-store" });
+      const res = await fetch(url, { cache: "no-store" });
 
       if (!res.ok) {
         syncStatus.value = `拉取失败: ${res.status}`;
@@ -55,11 +48,9 @@ export function useRemoteSync(
       }
 
       const currentSyncUrl = state.settings.syncUrl;
-      const currentSyncToken = state.settings.syncToken;
 
       const incoming = normalizeIncoming(data.payload);
       incoming.settings.syncUrl = currentSyncUrl;
-      incoming.settings.syncToken = currentSyncToken;
 
       replaceState(incoming);
       syncStatus.value = "拉取完成";
@@ -78,13 +69,9 @@ export function useRemoteSync(
     syncStatus.value = "正在上传...";
 
     try {
-      const token = (state.settings.syncToken || "").trim();
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
 
       const body: SyncPushRequest = {
         updatedAt: new Date().toISOString(),

@@ -26,7 +26,6 @@ function createDefaults(apiBase: string): AppState {
       activePage: "tasks",
       themeMode: "gorgeous",
       syncUrl: defaultSyncUrl,
-      syncToken: "",
       cardPool: [],
     },
   };
@@ -50,6 +49,9 @@ function normalizeState(raw: unknown, defaults: AppState): AppState {
   merged.settings.cardPool = Array.isArray(merged.settings.cardPool)
     ? merged.settings.cardPool
     : [];
+  if ("syncToken" in merged.settings) {
+    delete (merged.settings as AppState["settings"] & { syncToken?: string }).syncToken;
+  }
 
   return merged;
 }

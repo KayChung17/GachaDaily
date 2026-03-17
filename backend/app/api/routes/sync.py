@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from functools import lru_cache
 
-from fastapi import APIRouter, Header, HTTPException, status
+from fastapi import APIRouter, HTTPException
 
-from app.core.config import get_settings
 from app.schemas.sync import SyncPushRequest, SyncRecord
 from app.services.sync_store import SyncConflictError, SyncDataStore
+from app.core.config import get_settings
 
 router = APIRouter()
 
@@ -17,19 +17,8 @@ def get_sync_store() -> SyncDataStore:
     return SyncDataStore(settings.sync_data_path)
 
 
-def _verify_token(authorization: str | None) -> None:
-    settings = get_settings()
-    token = (authorization or "").replace("Bearer ", "").strip()
-    if token != settings.sync_token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="unauthorized",
-        )
-
-
 @router.get("/sync", response_model=SyncRecord)
-def sync_pull(authorization: str | None = Header(default=None)):
-    _verify_token(authorization)
+def sync_pull():
     record = get_sync_store().read()
     if record is None:
         return SyncRecord(version=0, updatedAt=None, payload=None)
@@ -37,11 +26,7 @@ def sync_pull(authorization: str | None = Header(default=None)):
 
 
 @router.put("/sync", response_model=SyncRecord)
-def sync_push(
-    body: SyncPushRequest,
-    authorization: str | None = Header(default=None),
-):
-    _verify_token(authorization)
+def sync_push(body: SyncPushRequest):
     try:
         return get_sync_store().write(body.payload, body.updated_at)
     except SyncConflictError as exc:

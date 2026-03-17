@@ -96,13 +96,11 @@ export function useTasks(state: AppState) {
 
   const repeatLabel = computed(() => repeatLabels[form.repeat] || repeatLabels.none);
 
-  const deadlineFieldLabel = computed(() =>
-    form.repeat !== "none" ? "循环截止时间" : "截止日期（可选）"
-  );
+  const deadlineFieldLabel = computed(() => "截止日期（可选）");
 
   const deadlineLabel = computed(() => {
     if (!selectedDeadlineDate.value) {
-      return form.repeat !== "none" ? "请选择循环截止时间" : "不设置截止日期";
+      return "不设置截止日期";
     }
     const today = new Date();
     return isSameDate(today, selectedDeadlineDate.value)
@@ -211,11 +209,6 @@ export function useTasks(state: AppState) {
   function addTask(): void {
     const title = form.title.trim();
     if (!title) return;
-
-    if (form.repeat !== "none" && !form.deadline) {
-      window.alert("循环任务请先设置循环截止时间。");
-      return;
-    }
 
     const deadlineDate = deadlineFromDateInput(form.deadline);
     state.tasks.unshift({

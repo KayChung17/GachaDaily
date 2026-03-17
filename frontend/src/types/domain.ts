@@ -36,7 +36,6 @@ export interface AppSettings {
   activePage: "tasks" | "cards" | "settings";
   themeMode: ThemeMode;
   syncUrl: string;
-  syncToken: string;
   cardPool: CardPoolItem[];
 }
 

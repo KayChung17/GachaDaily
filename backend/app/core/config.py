@@ -17,7 +17,6 @@ class Settings:
     api_port: int
     cors_origins: tuple[str, ...]
     sync_data_path: Path
-    sync_token: str
     rss_target_url: str
     rss_timeout_seconds: float
 
@@ -40,7 +39,6 @@ def get_settings() -> Settings:
         api_port=int(os.getenv("API_PORT", "8056")),
         cors_origins=tuple(cors),
         sync_data_path=Path(os.getenv("SYNC_DATA_PATH", str(default_data_path))),
-        sync_token=os.getenv("SYNC_TOKEN", "demo-token"),
         rss_target_url=os.getenv(
             "RSS_TARGET_URL",
             "https://rss-hub-mu-murex.vercel.app/pixiv/user/5229572",

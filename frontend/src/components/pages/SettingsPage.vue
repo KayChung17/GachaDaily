@@ -125,17 +125,6 @@ onUnmounted(() => {
             <span class="input-line"></span>
           </div>
         </div>
-        <div class="form-group flex-1">
-          <label>访问令牌 (Token)</label>
-          <div class="input-wrapper glass-input">
-            <input
-              v-model="store.state.settings.syncToken"
-              type="password"
-              placeholder="输入访问令牌"
-            />
-            <span class="input-line"></span>
-          </div>
-        </div>
       </div>
 
       <div class="settings-actions">

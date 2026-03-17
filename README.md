@@ -40,8 +40,8 @@ GachaDaily/
 ## 后端 API
 
 - `GET /api/rss`：RSS 代理（可通过 `?url=` 临时覆盖目标 URL）
-- `GET /api/sync`：拉取同步数据（需要 `Authorization: Bearer <token>`）
-- `PUT /api/sync`：上传同步数据（需要 token）
+- `GET /api/sync`：拉取同步数据
+- `PUT /api/sync`：上传同步数据
 - `GET /healthz`：健康检查
 
 ## 本地开发
@@ -75,7 +75,6 @@ cd ..
 ## 环境变量
 
 后端支持：
-- `SYNC_TOKEN`
 - `SYNC_DATA_PATH`
 - `RSS_TARGET_URL`
 - `CORS_ORIGINS`
