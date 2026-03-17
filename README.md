@@ -23,9 +23,12 @@ GachaDaily/
 │   ├── public/img/             # 静态图片资源
 │   ├── src/
 │   │   ├── assets/styles.css   # 样式
-│   │   ├── legacy/             # 旧逻辑平滑迁移层
+│   │   ├── components/         # Vue 页面与通用组件
+│   │   ├── composables/        # 业务逻辑与状态管理
+│   │   ├── store/              # 应用级状态注入入口
+│   │   ├── types/              # 前端领域模型与 API 类型
 │   │   ├── App.vue
-│   │   └── main.js
+│   │   └── main.ts
 │   ├── .env.example
 │   ├── index.html
 │   ├── package.json
@@ -79,4 +82,4 @@ cd ..
 - `API_HOST` / `API_PORT`
 
 前端支持：
-- `VITE_API_BASE_URL`（可选；默认使用 Vite 的 `/api` 代理）
+- `VITE_API_BASE_URL`（可选；本地默认直连 `http://127.0.0.1:8056`）
