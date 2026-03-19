@@ -212,3 +212,6 @@ backend/data/sync_data*.json
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Local sync server payload snapshots
+sync_data*.json

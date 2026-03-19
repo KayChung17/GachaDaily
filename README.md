@@ -1,84 +1,51 @@
 <p align="center">
-  <img src="./frontend/public/img/title.png" alt="Gacha Daily" width="200" />
+<img src="https://github.com/KayChung17/GachaDaily/blob/main/img/title.png" alt="Gacha Daily" width="200">
 </p>
 <h1 align="center">Gacha Daily</h1>
 
-基于 RSS-pixiv 订阅的抽卡体验，把日常任务做成「任务清单 + 抽卡」应用。
+基于RSS-pixiv订阅的抽卡体验，让枯燥的日常任务变成二游日活
+一个本地运行的「任务清单 + 抽卡」网页应用。  
 
-## 新架构（Vue 3 + FastAPI）
+## 界面
+
+<img src="https://github.com/KayChung17/GachaDaily/blob/main/img/demo_1.png" width="200" height="150"><img src="https://github.com/KayChung17/GachaDaily/blob/main/img/demo_5.png" width="200" height="150">
+
+<img src="https://github.com/KayChung17/GachaDaily/blob/main/img/demo_2.png" width="200" height="150"><img src="https://github.com/KayChung17/GachaDaily/blob/main/img/demo_3.png" width="200" height="150">
+
+<img src="https://github.com/KayChung17/GachaDaily/blob/main/img/demo_4.png" width="200" height="150">
+
+## 本机运行
+
+1. 启动前端：
+
+```powershell
+python -m http.server 3000 # 端口可自定义
+```
+
+2. 浏览器打开页面
 
 ```text
-GachaDaily/
-├── backend/                    # FastAPI 后端
-│   ├── app/
-│   │   ├── api/routes/         # 路由层
-│   │   ├── core/               # 配置层
-│   │   ├── schemas/            # Pydantic 模型
-│   │   ├── services/           # 业务服务
-│   │   └── main.py             # 应用入口
-│   ├── data/                   # 持久化数据（sync_data.json）
-│   ├── .env.example
-│   └── requirements.txt
-├── frontend/                   # Vue3 + Vite 前端
-│   ├── public/img/             # 静态图片资源
-│   ├── src/
-│   │   ├── assets/styles.css   # 样式
-│   │   ├── components/         # Vue 页面与通用组件
-│   │   ├── composables/        # 业务逻辑与状态管理
-│   │   ├── store/              # 应用级状态注入入口
-│   │   ├── types/              # 前端领域模型与 API 类型
-│   │   ├── App.vue
-│   │   └── main.ts
-│   ├── .env.example
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
-├── legacy/                     # 原始单页实现备份
-└── start.sh                    # 一键并行启动前后端
+http://localhost:3000
 ```
 
-## 后端 API
+3. （可选）启动 RSS 代理：
 
-- `GET /api/rss`：RSS 代理（可通过 `?url=` 临时覆盖目标 URL）
-- `GET /api/sync`：拉取同步数据
-- `PUT /api/sync`：上传同步数据
-- `GET /healthz`：健康检查
-
-## 本地开发
-
-1. 安装后端依赖
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r backend/requirements.txt
+```powershell
+$env:RSS_TARGET_URL="<你的RSS链接>"
+$env:RSS_PROXY_PORT="8787"
+python rss_proxy.py
 ```
 
-2. 安装前端依赖
+4. （可选）启动同步服务：
 
-```bash
-cd frontend
-npm install
-cd ..
+```powershell
+$env:SYNC_PORT="8788"
+$env:SYNC_ALLOW_ORIGIN="http://localhost:3000"
+python sync_server.py
 ```
 
-3. 启动（推荐）
+## TODO
 
-```bash
-./start.sh
-```
-
-默认地址：
-- 前端：`http://localhost:5175`
-- 后端：`http://127.0.0.1:8056`
-
-## 环境变量
-
-后端支持：
-- `SYNC_DATA_PATH`
-- `RSS_TARGET_URL`
-- `CORS_ORIGINS`
-- `API_HOST` / `API_PORT`
-
-前端支持：
-- `VITE_API_BASE_URL`（可选；本地默认直连 `http://127.0.0.1:8056`）
+- [ ] 卡池自定义稀有度
+- [ ] 统一UI设计(AI还是缺点意思）
+- [ ] 取消对RSS的依赖，用其他途径爬取图片

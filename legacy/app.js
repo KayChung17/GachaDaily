@@ -10,7 +10,6 @@ const defaults = {
     activePage: "tasks",
     themeMode: "gorgeous",
     syncUrl: "http://127.0.0.1:8788/api/sync",
-    syncToken: "",
     cardPool: [],
   },
 };
@@ -42,7 +41,6 @@ const gachaRevealClose = document.getElementById("gachaRevealClose");
 const rssUrlInput = document.getElementById("rssUrl");
 const rssSyncButton = document.getElementById("rssSyncButton");
 const syncUrlInput = document.getElementById("syncUrl");
-const syncTokenInput = document.getElementById("syncToken");
 const syncPullButton = document.getElementById("syncPullButton");
 const syncPushButton = document.getElementById("syncPushButton");
 const syncStatus = document.getElementById("syncStatus");
@@ -99,13 +97,17 @@ const themeLabels = {
 };
 
 function normalizeState(raw) {
+  const normalizedSettings = {
+    ...structuredClone(defaults.settings),
+    ...((raw && raw.settings) || {}),
+  };
+  // Drop legacy auth field; sync now works without token.
+  delete normalizedSettings.syncToken;
+
   return {
     ...structuredClone(defaults),
     ...(raw || {}),
-    settings: {
-      ...structuredClone(defaults.settings),
-      ...((raw && raw.settings) || {}),
-    },
+    settings: normalizedSettings,
   };
 }
 
@@ -181,7 +183,6 @@ function setSyncStatus(message) {
 function updateSettings() {
   if (rssUrlInput) state.settings.rssUrl = rssUrlInput.value.trim();
   if (syncUrlInput) state.settings.syncUrl = syncUrlInput.value.trim();
-  if (syncTokenInput) state.settings.syncToken = syncTokenInput.value.trim();
   if (themeModeInput) state.settings.themeMode = themeModeInput.value;
   saveState();
 }
@@ -201,6 +202,7 @@ function updateRewardPreview() {
 }
 
 function shiftDeadline(deadline, repeat) {
+  if (!deadline) return "";
   const date = new Date(deadline);
   if (Number.isNaN(date.getTime())) return deadline;
   if (repeat === "daily") date.setDate(date.getDate() + 1);
@@ -216,10 +218,6 @@ function addTask(event) {
   if (!title) return;
   const repeatValue = taskInputs.repeat ? taskInputs.repeat.value : "none";
   const deadlineValue = taskInputs.deadline.value;
-  if (repeatValue !== "none" && !deadlineValue) {
-    alert("循环任务请先设置循环截止时间。");
-    return;
-  }
   const deadlineDate = deadlineFromDateInput(deadlineValue);
 
   const task = {
@@ -397,9 +395,7 @@ async function syncRssToPool() {
 }
 
 function getSyncPayload() {
-  const payload = normalizeState(state);
-  payload.settings.syncToken = "";
-  return payload;
+  return normalizeState(state);
 }
 
 async function syncPull() {
@@ -411,9 +407,7 @@ async function syncPull() {
   }
   setSyncStatus("正在拉取...");
   try {
-    const token = syncTokenInput ? syncTokenInput.value.trim() : "";
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const res = await fetch(url, { headers, cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) {
       setSyncStatus(`拉取失败: ${res.status}`);
       return;
@@ -429,7 +423,6 @@ async function syncPull() {
     }
     const incoming = normalizeState(data.payload);
     incoming.settings.syncUrl = state.settings.syncUrl;
-    incoming.settings.syncToken = state.settings.syncToken;
     state = incoming;
     saveState();
     render();
@@ -450,10 +443,8 @@ async function syncPush() {
   }
   setSyncStatus("正在上传...");
   try {
-    const token = syncTokenInput ? syncTokenInput.value.trim() : "";
     const headers = {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
     const res = await fetch(url, {
       method: "PUT",
@@ -514,9 +505,7 @@ function setActivePage(page) {
 function updateDeadlineLabel() {
   if (!deadlinePickerLabel) return;
   if (!selectedDeadlineDate) {
-    deadlinePickerLabel.textContent = taskInputs.repeat && taskInputs.repeat.value !== "none"
-      ? "请选择循环截止时间"
-      : "不设置截止日期";
+    deadlinePickerLabel.textContent = "不设置截止日期";
     return;
   }
   const today = new Date();
@@ -527,10 +516,7 @@ function updateDeadlineLabel() {
 
 function updateDeadlineFieldLabel() {
   if (!deadlineFieldLabel) return;
-  deadlineFieldLabel.textContent =
-    taskInputs.repeat && taskInputs.repeat.value !== "none"
-      ? "循环截止时间"
-      : "截止日期（可选）";
+  deadlineFieldLabel.textContent = "截止日期（可选）";
 }
 
 function renderCalendar() {
@@ -844,7 +830,6 @@ function renderHeader() {
   if (gachaCost) gachaCost.textContent = String(state.settings.gachaCost);
   if (rssUrlInput) rssUrlInput.value = state.settings.rssUrl || "";
   if (syncUrlInput) syncUrlInput.value = state.settings.syncUrl || "";
-  if (syncTokenInput) syncTokenInput.value = state.settings.syncToken || "";
   setSelectedTheme(state.settings.themeMode || "gorgeous", false);
 }
 
@@ -859,7 +844,6 @@ if (gachaButton) gachaButton.addEventListener("click", drawCard);
 if (rssUrlInput) rssUrlInput.addEventListener("change", updateSettings);
 if (rssSyncButton) rssSyncButton.addEventListener("click", syncRssToPool);
 if (syncUrlInput) syncUrlInput.addEventListener("change", updateSettings);
-if (syncTokenInput) syncTokenInput.addEventListener("change", updateSettings);
 if (themeModeInput) {
   themeModeInput.addEventListener("change", () => {
     updateSettings();
