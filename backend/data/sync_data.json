@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "updatedAt": "2026-03-17T13:01:49.810064Z",
+  "payload": {
+    "currency": 1,
+    "tasks": [],
+    "cards": [],
+    "settings": {
+      "gachaCost": 100,
+      "rssUrl": "/api/rss",
+      "activePage": "tasks",
+      "themeMode": "gorgeous",
+      "syncUrl": "/api/sync",
+      "cardPool": []
+    }
+  }
+}

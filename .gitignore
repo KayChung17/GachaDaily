@@ -201,6 +201,13 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+
+# Local sync data
+backend/data/sync_data*.json
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
